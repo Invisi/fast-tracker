@@ -422,6 +422,7 @@ let displayFarmedItems = function() {
 }
 
 let generateCSV = function (args) {
+  let date = new Date.toISOString();
   let head = [possibleFarms.value, args[2].name, timeFarmed].join(',')+'\n'
   let headers = ['item','id', 'count'].join(',')+'\n';
   let arr2csv = farmedItems.map(e => e.join(",")).join("\n");
@@ -429,7 +430,7 @@ let generateCSV = function (args) {
   let encodedUri = encodeURI(csvContent);
   let link = document.createElement('a');
   link.setAttribute('href', encodedUri);
-  link.setAttribute('download', possibleFarms.value+'_'+args[2].name +'_'+ Date.now().toISOString()+'.csv');
+  link.setAttribute('download', possibleFarms.value+'_'+args[2].name +'_'+ date +'.csv');
   document.body.appendChild(link); // Required for FF
 
   link.click(); // This will download the data file named 'my_data.csv'.
