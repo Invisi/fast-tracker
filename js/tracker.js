@@ -7,6 +7,7 @@ const epCharacters = '/v2/characters';
 const epWallet = '/v2/account/wallet';
 const epBank = '/v2/account/bank';
 const epMaterials = '/v2/account/materials';
+const epAccount = '/v2/account';
 
 const neededPermissions = [
   "wallet",
@@ -24,15 +25,15 @@ let possibleFarms    = formTracking.querySelector('select[name="possibleFarms"]'
 let trackedEndpoints = document.querySelector('#trackedEndpoints');
 
 let timerStart = Date.now();
+let timeFarmed = 0;
+let timerInterval;
 
-let actionHandler = 0;
-
+let actionHandler  = 0;
 let characterNames = [];
-
 let itemStartCount = {};
-let itemStopCount = {};
-
+let itemStopCount  = {};
 let itemDifference = {};
+let farmedItems    = [];
 
 /******************************************/
 /************ Functions *******************/
@@ -69,13 +70,8 @@ let formHandler = function(e) {
   e.preventDefault();
 
   if (e.target.querySelector('input[name="actionHandler"]').value === '0') {
-    timerStart = Date.now();
-    e.target.querySelector('input[name="actionHandler"]').value = 1;
-    e.target.querySelector('input[type="submit"]').value = 'Stop Farming';
     startTracking();
   } else if (e.target.querySelector('input[name="actionHandler"]').value === '1') {
-    // e.target.querySelector('input[name="actionHandler"]').value = 1;
-    e.target.querySelector('input[type="submit"]').disabled;
     stopTracking();
   }
 }
@@ -85,7 +81,9 @@ let startTracking = async function() {
   getTokenInfo()
     .then(getCharacterNames)
     .then(function(chars) {
-      setInterval(timer, 1000);
+
+      formTracking.querySelector('input[name="actionHandler"]').value = 1;
+      formTracking.querySelector('input[type="submit"]').value = 'Stop Farming';
       characterNames = chars;
 
       let promises = [];
@@ -131,6 +129,8 @@ let startTracking = async function() {
       }));
 
       Promise.all(promises).then(function(e) {
+        timerStart = Date.now();
+        timerInterval = setInterval(timer, 1000);
         itemStartCount = flattenItems(e);
       });
     });
@@ -139,6 +139,11 @@ let startTracking = async function() {
 let stopTracking = async function() {
   let promises = [];
 
+  clearInterval(timerInterval);
+
+  timeFarmed = Date.now() - timerStart;
+
+  // trackingForm.querySelector('input[type="submit"]').disabled;
   for (var i = characterNames.length - 1; i >= 0; i--) {
     promises.push(getInventory(characterNames[i]).then(function(charinv) {
       // invStartingValues.push(calcBagCount(charinv[1]));
@@ -339,14 +344,29 @@ let currencyDetails = async function () {
   return details;
 }
 
+// let itemDetails = async function (ids) {
+//   let iEp = baseURL + '/v2/items?lang=en&ids=' + ids.join(',');
+//   const cResponse = await fetch(cEp);
+//   let details = cResponse.json();
+//   return details;
+// }
+//
+
+
 // TODO: Styling of gold, currently displayed as copper with gold sprite
 let displayCurrencies = async function () {
   let cDetails = await currencyDetails();
   let str2html = [];
 
-  for (var i = cDetails.length - 1; i >= 0; i--) {
-    if(typeof itemDifference['w'+cDetails[i].id] !== 'undefined')
+  for (var i = cDetails.length - 1; i >= 0; i--) {6
+    if(typeof itemDifference['w'+cDetails[i].id] !== 'undefined') {
+      farmedItems.push([
+        cDetails[i].name,
+        cDetails[i].id,
+        itemDifference['w' + cDetails[i].id]
+      ]);
       str2html.push('<li>'+itemDifference['w'+cDetails[i].id]+'<span class="sprite"><img src="' + cDetails[i].icon + '" alt="' + cDetails[i].name + '"></span></li>')
+    }
   }
 
   document.querySelector('#farmedCurrencies').innerHTML = str2html.join('');
@@ -364,8 +384,7 @@ let displayItems = async function() {
   });
 
   // TODO: Fix limit for API
-  // if (ids > 50)
-  let iEp = baseURL + '/v2/items?ids=' + ids.slice(0, 40).join(',');
+  let iEp = baseURL + '/v2/items?lang=en&ids=' + ids.join(',');
 
   // Request
   const iResponse = await fetch(iEp);
@@ -373,25 +392,47 @@ let displayItems = async function() {
 
   let str2html = [];
 
-  // str2html.push('<');
   if (iDetails.length > 0) {
     for (var i = 0; i < iDetails.length; i++) {
-      // items.push({
-      //   name: iDetails[i].name,
-      //   item: iDetails[i].id,
-      //   count: itemDifference['id-' + iDetails[i].id],
-      //   icon: iDetails[i].icon
-      // });
+      farmedItems.push([
+        iDetails[i].name,
+        iDetails[i].id,
+        itemDifference['i' + iDetails[i].id]
+      ]);
       str2html.push('<div class="item" id="i' + iDetails[i].id + '"><img src="' + iDetails[i].icon + '" alt="' + iDetails[i].name + '"><span class="count">' + itemDifference['i' + iDetails[i].id] + '</span></div>');
     }
-
     document.querySelector('#farmedItems').innerHTML = str2html.join('');
   }
 }
 
+let getAccountInfo = async function () {
+    // TODO: Fix limit for API
+    let ep = buildEndpoint(epAccount);
+
+    // Request
+    const response = await fetch(ep);
+    let account = await response.json();
+
+    return account;
+}
+
 let displayFarmedItems = function() {
-  displayCurrencies();
-  displayItems();
+  Promise.all([displayItems(),displayCurrencies(),getAccountInfo()])
+      .then(generateCSV)
+}
+
+let generateCSV = function (args) {
+  let head = [possibleFarms.value, args[2].name, timeFarmed].join(',')+'\n'
+  let headers = ['item','id', 'count'].join(',')+'\n';
+  let arr2csv = farmedItems.map(e => e.join(",")).join("\n");
+  let csvContent = 'data:text/csv;charset=utf-8,'+head+headers+arr2csv;
+  let encodedUri = encodeURI(csvContent);
+  let link = document.createElement('a');
+  link.setAttribute('href', encodedUri);
+  link.setAttribute('download', possibleFarms.value+'_'+args[2].name +'_'+ Date.now().toISOString()+'.csv');
+  document.body.appendChild(link); // Required for FF
+
+  link.click(); // This will download the data file named 'my_data.csv'.
 }
 
 let timer = function () {
@@ -414,9 +455,9 @@ Number.prototype.toHumanTimer = function () {
       time = time + hours + ' hours ';
     }
     if (minutes === 1) {
-      time = time + minutes + ' minute and ';
+      time = time + minutes + ' minute ';
     } else if (minutes >= 1) {
-      time = time + minutes + ' minutes and ';
+      time = time + minutes + ' minutes ';
     }
     if (seconds === 1) {
       time = time + seconds + ' second ';
@@ -431,3 +472,5 @@ Number.prototype.toHumanTimer = function () {
 /******************************************/
 /*************** Event ********************/
 formTracking.addEventListener('submit', formHandler);
+
+
