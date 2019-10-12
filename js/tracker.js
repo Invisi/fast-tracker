@@ -141,7 +141,7 @@ let stopTracking = async function() {
 
   clearInterval(timerInterval);
 
-  timeFarmed = Date.now() - timerStart;
+  timeFarmed = (Date.now() - timerStart) / 1000;
 
   // trackingForm.querySelector('input[type="submit"]').disabled;
   for (var i = characterNames.length - 1; i >= 0; i--) {
@@ -422,7 +422,7 @@ let displayFarmedItems = function() {
 }
 
 let generateCSV = function (args) {
-  let date = new Date.toISOString();
+  let date = new Date().toISOString();
   let head = [possibleFarms.value, args[2].name, timeFarmed].join(',')+'\n'
   let headers = ['item','id', 'count'].join(',')+'\n';
   let arr2csv = farmedItems.map(e => e.join(",")).join("\n");
