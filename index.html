@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Tracker</title>
+  <link rel="stylesheet" href="css/milligram.min.css">
+  <link rel="stylesheet" href="css/fast.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css" integrity="sha256-+N4/V/SbAFiW1MPBCXnfnP9QSN3+Keu+NlB+0ev/YKQ=" crossorigin="anonymous" />
+</head>
+<body>
+  <form name="trackingForm">
+    <input type="text" name="GW2-Token" autocomplete="on" />
+    <input type="hidden" name="actionHandler" value="0" autocomplete="off" disabled />
+    <input type="submit" value="Start Farming" />
+  </form>
+
+  <div class="container">
+    <div class="row">
+      <div class="column column-30">
+        <table>
+          <thead>
+            <tr>
+              <th>Endpoint</th>
+              <th>Initial Values</th>
+              <th>Final Values</th>
+            </tr>
+          </thead>
+          <tbody id="trackedEndpoints">
+
+          </tbody>
+        </table>
+      </div>
+      <div class="column">
+        <h2>Farmed</h2>
+        <div class="flex-container wrap" id="farmed"></div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+  </footer>
+  <script src="js/tracker.js"></script>
+</body>
+</html>

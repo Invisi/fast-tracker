@@ -1,0 +1,52 @@
+.fas.fa-spinner {
+  animation: spin 2s linear infinite;
+}
+
+.fas.fa-check {
+  color: #28a745 !important;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.liEndpoints {
+  list-style: none;
+}
+
+.flex-container {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  /*border: 1px solid silver;*/
+  -ms-box-orient: horizontal;
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -moz-flex;
+  display: -webkit-flex;
+  display: flex;
+}
+
+.wrap    {
+  -webkit-flex-wrap: wrap;
+  flex-wrap: wrap;
+}
+
+.item {
+  position: relative;
+  padding: 1px;
+}
+
+.item > .count {
+  color: white;
+  font-size: 12px;
+  position: absolute;
+  bottom: 5px;
+  right: 3px;
+}
+
+.item > img {
+  max-width: 40px;
+}
