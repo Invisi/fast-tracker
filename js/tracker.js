@@ -325,11 +325,32 @@ let calcDifference = function() {
   }
 }
 
-let displayFarmedItems = async function() {
+let currencyDetails = async function () {
+  let cEp = baseURL + '/v2/currencies?ids=all&lang=en';
 
+  const cResponse = await fetch(cEp);
+  let details = cResponse.json();
+
+  return details;
+}
+
+// TODO: Styling of gold, currently displayed as copper with gold sprite
+let displayCurrencies = async function () {
+  let cDetails = await currencyDetails();
+  let str2html = [];
+
+  for (var i = cDetails.length - 1; i >= 0; i--) {
+    if(typeof itemDifference['w'+cDetails[i].id] !== 'undefined')
+      str2html.push('<li>'+itemDifference['w'+cDetails[i].id]+'<span class="sprite"><img src="' + cDetails[i].icon + '" alt="' + cDetails[i].name + '"></span></li>')
+  }
+
+  document.querySelector('#farmedCurrencies').innerHTML = str2html.join('');
+}
+
+let displayItems = async function() {
   let ids = Object.keys(itemDifference).map(function(item) {
     if (item[0] !== 'i')
-      return undefined;
+      return;
     return item.substring(1);
   });
 
@@ -339,28 +360,33 @@ let displayFarmedItems = async function() {
 
   // TODO: Fix limit for API
   // if (ids > 50)
-  let ep = baseURL + '/v2/items?ids=' + ids.slice(0, 40).join(',');
-
+  let iEp = baseURL + '/v2/items?ids=' + ids.slice(0, 40).join(',');
 
   // Request
-  const response = await fetch(ep);
-  let details = await response.json();
+  const iResponse = await fetch(iEp);
+  let iDetails = await iResponse.json();
 
   let str2html = [];
 
-  if (details.length > 0) {
-    for (var i = 0; i < details.length; i++) {
+  // str2html.push('<');
+  if (iDetails.length > 0) {
+    for (var i = 0; i < iDetails.length; i++) {
       // items.push({
-      //   name: details[i].name,
-      //   item: details[i].id,
-      //   count: itemDifference['id-' + details[i].id],
-      //   icon: details[i].icon
+      //   name: iDetails[i].name,
+      //   item: iDetails[i].id,
+      //   count: itemDifference['id-' + iDetails[i].id],
+      //   icon: iDetails[i].icon
       // });
-      str2html.push('<div class="item" id="i' + details[i].id + '"><img src="' + details[i].icon + '" alt="' + details[i].name + '"><span class="count">' + itemDifference['i' + details[i].id] + '</span></div>');
+      str2html.push('<div class="item" id="i' + iDetails[i].id + '"><img src="' + iDetails[i].icon + '" alt="' + iDetails[i].name + '"><span class="count">' + itemDifference['i' + iDetails[i].id] + '</span></div>');
     }
 
-    document.querySelector('#farmed').innerHTML = str2html.join('');
+    document.querySelector('#farmedItems').innerHTML = str2html.join('');
   }
+}
+
+let displayFarmedItems = function() {
+  displayCurrencies();
+  displayItems();
 }
 
 /******************************************/
