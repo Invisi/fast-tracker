@@ -22,6 +22,8 @@ let formTracking = document.querySelector('form[name="trackingForm"]');
 let inputToken = formTracking.querySelector('input[name="GW2-Token"]');
 let trackedEndpoints = document.querySelector('#trackedEndpoints');
 
+let timerStart = Date.now();
+
 let actionHandler = 0;
 
 let characterNames = [];
@@ -66,6 +68,7 @@ let formHandler = function(e) {
   e.preventDefault();
 
   if (e.target.querySelector('input[name="actionHandler"]').value === '0') {
+    timerStart = Date.now();
     e.target.querySelector('input[name="actionHandler"]').value = 1;
     e.target.querySelector('input[type="submit"]').value = 'Stop Farming';
     startTracking();
@@ -81,6 +84,7 @@ let startTracking = async function() {
   getTokenInfo()
     .then(getCharacterNames)
     .then(function(chars) {
+      setInterval(timer, 1000);
       characterNames = chars;
 
       let promises = [];
@@ -387,6 +391,40 @@ let displayItems = async function() {
 let displayFarmedItems = function() {
   displayCurrencies();
   displayItems();
+}
+
+let timer = function () {
+  var delta = Date.now() - timerStart; // milliseconds elapsed since start
+  document.querySelector('span.timer').innerHTML = 'Farming for ' + Math.floor(delta / 1000).toHumanTimer();
+}
+
+Number.prototype.toHumanTimer = function () {
+    let sec_num = parseInt(this, 10); // don't forget the second param
+    let hours   = Math.floor(sec_num / 3600);
+    let minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+    let seconds = sec_num - (hours * 3600) - (minutes * 60);
+    let time = '';
+    // if (hours   < 10) {hours   = "0"+hours;}
+    // if (minutes < 10) {minutes = "0"+minutes;}
+    // if (seconds < 10) {seconds = "0"+seconds;}
+    if (hours === 1) {
+      time = time + hours + ' hour ';
+    } else if (hours >= 1) {
+      time = time + hours + ' hours ';
+    }
+    if (minutes === 1) {
+      time = time + minutes + ' minute and ';
+    } else if (minutes >= 1) {
+      time = time + minutes + ' minutes and ';
+    }
+    if (seconds === 1) {
+      time = time + seconds + ' second ';
+    } else if (seconds >= 1) {
+      time = time + seconds + ' seconds ';
+    }
+
+    // return hours+' hours '+minutes+' minutes and '+ seconds + ' seconds';
+    return time;
 }
 
 /******************************************/
