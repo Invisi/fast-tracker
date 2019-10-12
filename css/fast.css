@@ -136,8 +136,8 @@
   }
 }
 .navigation {
-  background:#f4f5f6;
-  border-bottom:.1rem solid #f4f5f6;
+  background:#222;
+  border-bottom:.1rem solid #222;
   display:block;
   height:5.2rem;
   left:0;
@@ -175,11 +175,11 @@
   top:.3rem
 }
 .navigation a {
-  color: #24292e;
+  color:  white;
 }
 .navigation .navigation-title,
 .navigation .title {
-  color:#24292e;
+  color: white;
   position:relative
 }
 .navigation .navigation-link,
@@ -192,7 +192,7 @@
   text-decoration:none
 }
 .navigation .navigation-link.active {
-  color:#24292e;
+  color: white;
 }
 
 .timer {
