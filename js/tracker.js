@@ -316,9 +316,6 @@ let calcDifference = function() {
   for (var item in itemStopCount) {
     if (typeof itemStartCount[item] !== 'undefined') {
       count = itemStopCount[item] - itemStartCount[item];
-      // TODO: Only for Testing!!
-      if (item === 'i12142')
-        count = itemStopCount[item] - (itemStartCount[item] - 10);
     } else {
       count = itemStopCount[item];
     }
