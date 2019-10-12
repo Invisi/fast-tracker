@@ -18,8 +18,9 @@ const neededPermissions = [
 /******************************************/
 /************ Variables *******************/
 
-let formTracking = document.querySelector('form[name="trackingForm"]');
-let inputToken = formTracking.querySelector('input[name="GW2-Token"]');
+let formTracking     = document.querySelector('form[name="trackingForm"]');
+let inputToken       = formTracking.querySelector('input[name="GW2-Token"]');
+let possibleFarms    = formTracking.querySelector('select[name="possibleFarms"]');
 let trackedEndpoints = document.querySelector('#trackedEndpoints');
 
 let timerStart = Date.now();

@@ -23,9 +23,27 @@
     <div class="row">
       <div class="column column-70">
       <form name="trackingForm">
-        <input type="text" name="GW2-Token" autocomplete="on" />
+        <label for="possibleFarms">What do you track?</label>
+        <select name="possibleFarms" autocomplete="off" autofocus="on" required="true">
+          <option value=""></option>
+          <option value="dragonfall">Dragonfall</option>
+          <option value="istan">Istan</option>
+          <option value="forgedchamptrain">Forged Champtrain</option>
+          <option value="metatrain">Gemstone / LS Meta Train</option>
+          <option value="doricleather">Doric Leather Farm</option>
+          <option value="swriba">Silverwastes RIBA</option>
+          <option value="lostsaddlebags">Lost Saddlebag</option>
+          <option value="phylactery">Palawan Phylactery</option>
+          <option value="forgedcomponents">Battered Forged Components</option>
+          <option value="sentientseeds">Sentient Seeds</option>
+          <option value="brandedstrongboxes">Branded Strongboxes</option>
+          <option value="nothing">Nothing on the List</option>
+        </select>
+        <label for="GW2-Token">API Token</label>
+        <input type="text" name="GW2-Token" autocomplete="on" placeholder="FC088AC5-0417-B044-83A8-93CFF3E270CB7A6F9F58-DE0C-9DF7-4311-639C051E3A49" required="true" />
         <input type="hidden" name="actionHandler" value="0" autocomplete="off" disabled />
         <input type="submit" value="Start Farming" />
+        <!-- <button name="downloadCSV">Download CSV</button> -->
       </form>
     </div>
     <div class="column">
