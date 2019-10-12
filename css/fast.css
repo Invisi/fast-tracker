@@ -50,3 +50,13 @@
 .item > img {
   max-width: 40px;
 }
+
+#farmedCurrencies {
+  list-style: none;
+}
+
+.sprite {
+  width: 18px;
+  height: 18px;
+  display: inline-block;
+}
