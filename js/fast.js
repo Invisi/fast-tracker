@@ -386,7 +386,7 @@ let displayCurrencies = async function () {
         let overallCopperABS = itemDifference['w'+cDetails[i].id];
         // let coppeitemDifference['w'+cDetails[i].id]
         let gold = Math.floor(overallCopperABS/10000) * neg;
-        let leftCopper = overallCopperABS % 10000 * neg;
+        let leftCopper = overallCopperABS % 10000;
         let silver = Math.floor(leftCopper/100) * neg;
         let copper = leftCopper % 100 * neg ;
 
