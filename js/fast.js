@@ -10,10 +10,10 @@ const epMaterials = '/v2/account/materials';
 const epAccount = '/v2/account';
 
 const neededPermissions = [
-  "wallet",
-  "characters",
-  "account",
-  "inventories"
+"wallet",
+"characters",
+"account",
+"inventories"
 ];
 
 /******************************************/
@@ -79,26 +79,26 @@ let formHandler = function(e) {
 
 let startTracking = async function() {
   getTokenInfo()
-    .then(getCharacterNames)
-    .then(function(chars) {
+  .then(getCharacterNames)
+  .then(function(chars) {
 
-      formTracking.querySelector('input[name="actionHandler"]').value = 1;
-      formTracking.querySelector('input[type="submit"]').value = 'Stop Farming';
-      characterNames = chars;
+    formTracking.querySelector('input[name="actionHandler"]').value = 1;
+    formTracking.querySelector('input[type="submit"]').value = 'Stop Farming';
+    characterNames = chars;
 
-      let promises = [];
+    let promises = [];
 
-      for (var i = chars.length - 1; i >= 0; i--) {
-        promises.push(getInventory(chars[i]).then(function(charinv) {
+    for (var i = chars.length - 1; i >= 0; i--) {
+      promises.push(getInventory(chars[i]).then(function(charinv) {
           // invStartingValues.push(calcBagCount(charinv[1]));
           // Remove spinner, add checked mark
           let trc = document.querySelector('#hl-' + charinv[0].toLowerCase().replace(/\s/g, '-'));
           trc.querySelectorAll('td')[1].innerHTML = '<i class="fas fa-check"></i>';
           return charinv[1];
         }));
-      }
+    }
 
-      promises.push(getBank().then(function(bank) {
+    promises.push(getBank().then(function(bank) {
         // bankStartingValues = calcBankCount(bank);
         // Remove spinner, add checked mark
         let trbank = document.querySelector('#hl-bank');
@@ -108,7 +108,7 @@ let startTracking = async function() {
         };
       }));
 
-      promises.push(getMaterials().then(function(materials) {
+    promises.push(getMaterials().then(function(materials) {
         // materialsStartingValues = calcMaterialsCount(materials);
         // Remove spinner, add checked mark
         let trmaterials = document.querySelector('#hl-materials');
@@ -118,7 +118,7 @@ let startTracking = async function() {
         };
       }));
 
-      promises.push(getWallet().then(async function(wallet) {
+    promises.push(getWallet().then(async function(wallet) {
         // walletStartingValues = await calcWalletCount(wallet);
         // Remove spinner, add checked mark
         let trwallet = document.querySelector('#hl-wallet');
@@ -128,12 +128,12 @@ let startTracking = async function() {
         };
       }));
 
-      Promise.all(promises).then(function(e) {
-        timerStart = Date.now();
-        timerInterval = setInterval(timer, 1000);
-        itemStartCount = flattenItems(e);
-      });
+    Promise.all(promises).then(function(e) {
+      timerStart = Date.now();
+      timerInterval = setInterval(timer, 1000);
+      itemStartCount = flattenItems(e);
     });
+  });
 }
 
 let stopTracking = async function() {
@@ -185,10 +185,10 @@ let stopTracking = async function() {
   }));
 
   Promise.all(promises).then(function(e) {
-      itemStopCount = flattenItems(e);
-    })
-    .then(calcDifference)
-    .then(displayFarmedItems);
+    itemStopCount = flattenItems(e);
+  })
+  .then(calcDifference)
+  .then(displayFarmedItems);
 }
 
 // Check if all permissions needed are granted
@@ -228,8 +228,8 @@ let getInventory = async function(character) {
 
   // return character and its inventory
   return [
-    character,
-    inventory
+  character,
+  inventory
   ];
 }
 
@@ -364,7 +364,7 @@ let displayCurrencies = async function () {
         cDetails[i].name,
         cDetails[i].id,
         itemDifference['w' + cDetails[i].id]
-      ]);
+        ]);
       str2html.push('<li>'+itemDifference['w'+cDetails[i].id]+'<span class="sprite"><img src="' + cDetails[i].icon + '" alt="' + cDetails[i].name + '"></span></li>')
     }
   }
@@ -398,7 +398,7 @@ let displayItems = async function() {
         iDetails[i].name,
         iDetails[i].id,
         itemDifference['i' + iDetails[i].id]
-      ]);
+        ]);
       str2html.push('<div class="item" id="i' + iDetails[i].id + '"><img src="' + iDetails[i].icon + '" alt="' + iDetails[i].name + '"><span class="count">' + itemDifference['i' + iDetails[i].id] + '</span></div>');
     }
     document.querySelector('#farmedItems').innerHTML = str2html.join('');
@@ -414,23 +414,23 @@ let getAccountInfo = async function () {
     let account = await response.json();
 
     return account;
-}
+  }
 
-let displayFarmedItems = function() {
-  Promise.all([displayItems(),displayCurrencies(),getAccountInfo()])
-      .then(generateCSV)
-}
+  let displayFarmedItems = function() {
+    Promise.all([displayItems(),displayCurrencies(),getAccountInfo()])
+    .then(generateCSV)
+  }
 
-let generateCSV = function (args) {
-  let date = new Date().toISOString();
-  let head = [possibleFarms.value, args[2].name, timeFarmed].join(',')+'\n'
-  let headers = ['item','id', 'count'].join(',')+'\n';
-  let arr2csv = farmedItems.map(e => e.join(",")).join("\n");
-  let csvContent = 'data:text/csv;charset=utf-8,'+head+headers+arr2csv;
-  let encodedUri = encodeURI(csvContent);
-  let link = document.createElement('a');
-  link.setAttribute('href', encodedUri);
-  link.setAttribute('download', possibleFarms.value+'_'+args[2].name +'_'+ date +'.csv');
+  let generateCSV = function (args) {
+    let date = new Date().toISOString();
+    let head = [possibleFarms.value, args[2].name, timeFarmed].join(',')+'\n'
+    let headers = ['item','id', 'count'].join(',')+'\n';
+    let arr2csv = farmedItems.map(e => e.join(",")).join("\n");
+    let csvContent = 'data:text/csv;charset=utf-8,'+head+headers+arr2csv;
+    let encodedUri = encodeURI(csvContent);
+    let link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', possibleFarms.value+'_'+args[2].name +'_'+ date +'.csv');
   document.body.appendChild(link); // Required for FF
 
   link.click(); // This will download the data file named 'my_data.csv'.
@@ -468,10 +468,10 @@ Number.prototype.toHumanTimer = function () {
 
     // return hours+' hours '+minutes+' minutes and '+ seconds + ' seconds';
     return time;
-}
+  }
 
-/******************************************/
-/*************** Event ********************/
-formTracking.addEventListener('submit', formHandler);
+  /******************************************/
+  /*************** Event ********************/
+  formTracking.addEventListener('submit', formHandler);
 
 

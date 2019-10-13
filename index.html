@@ -9,96 +9,96 @@
 </head>
 <body>
   <main class="wrapper">
-  <nav class="navigation">
-    <section class="container">
-      <a class="navigation-title" title="[fast] E U Farming Community"><strong>[fast] Farmingtracker</strong>  <small>(ALPHA)</small></a>
-      <ul class="navigation-list float-right">
-        <li class="navigation-item">
-          <a class="navigation-link" href="https://github.com/snow2k9/fast-tracker" target="__blank">Source</a>
-        </li>
-      </ul>
-    </section>
-  </nav>
-  <div class="container">
-    <div class="row">
-      <div class="column">
-      <form name="trackingForm">
-        <label for="possibleFarms">What do you want to track?</label>
-        <select name="possibleFarms" autocomplete="off" autofocus="on" required="true">
-          <option value=""></option>
-          <option value="dragonfall">Dragonfall</option>
-          <option value="istan">Istan</option>
-          <option value="forgedchamptrain">Forged Champtrain</option>
-          <option value="metatrain">Gemstone / LS Meta Train</option>
-          <option value="doricleather">Doric Leather Farm</option>
-          <option value="swriba">Silverwastes RIBA</option>
-          <option value="lostsaddlebags">Lost Saddlebag</option>
-          <option value="phylactery">Palawan Phylactery</option>
-          <option value="forgedcomponents">Battered Forged Components</option>
-          <option value="sentientseeds">Sentient Seeds</option>
-          <option value="brandedstrongboxes">Branded Strongboxes</option>
-          <option value="nothing">Nothing on the List</option>
-        </select>
-        <div class="row">
-          <div class="column">
-        <label for="GW2-Token">API Token</label>
-        <input type="text" name="GW2-Token" autocomplete="on" placeholder="FC088AC5-0417-B044-83A8-93CFF3E270CB7A6F9F58-DE0C-9DF7-4311-639C051E3A49" required="true" />
-        </div>
-
+    <nav class="navigation">
+      <section class="container">
+        <a class="navigation-title" title="[fast] E U Farming Community"><strong>[fast] Farmingtracker</strong>  <small>(ALPHA)</small></a>
+        <ul class="navigation-list float-right">
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://github.com/snow2k9/fast-tracker" target="__blank">Source</a>
+          </li>
+        </ul>
+      </section>
+    </nav>
+    <div class="container">
+      <div class="row">
         <div class="column">
-        <p><strong>Discretion Advice:</strong> Your API Key never gets published or disclosed to anyone!</p>
+          <form name="trackingForm">
+            <label for="possibleFarms">What do you want to track?</label>
+            <select name="possibleFarms" autocomplete="off" autofocus="on" required="true">
+              <option value=""></option>
+              <option value="dragonfall">Dragonfall</option>
+              <option value="istan">Istan</option>
+              <option value="forgedchamptrain">Forged Champtrain</option>
+              <option value="metatrain">Gemstone / LS Meta Train</option>
+              <option value="doricleather">Doric Leather Farm</option>
+              <option value="swriba">Silverwastes RIBA</option>
+              <option value="lostsaddlebags">Lost Saddlebag</option>
+              <option value="phylactery">Palawan Phylactery</option>
+              <option value="forgedcomponents">Battered Forged Components</option>
+              <option value="sentientseeds">Sentient Seeds</option>
+              <option value="brandedstrongboxes">Branded Strongboxes</option>
+              <option value="nothing">Nothing on the List</option>
+            </select>
+            <div class="row">
+              <div class="column">
+                <label for="GW2-Token">API Token</label>
+                <input type="text" name="GW2-Token" autocomplete="on" placeholder="FC088AC5-0417-B044-83A8-93CFF3E270CB7A6F9F58-DE0C-9DF7-4311-639C051E3A49" required="true" />
+              </div>
+
+              <div class="column">
+                <p><strong class="important">Discretion Advice:</strong> Your API Key never gets published or disclosed to anyone!</p>
+              </div>
+            </div>
+            <input type="hidden" name="actionHandler" value="0" autocomplete="off" disabled />
+
+            <div class="row">
+              <div class="column">
+                <input type="submit" value="Start Farming" class="button-fast" />
+              </div>
+              <div class="column">
+                <p><strong class="important">Reminder:</strong> Please wait at least 4 minutes before you stop the tracker.</p>
+              </div>
+            </div>
+            <!-- <button name="downloadCSV">Download CSV</button> -->
+          </form>
         </div>
       </div>
-        <input type="hidden" name="actionHandler" value="0" autocomplete="off" disabled />
-
-        <div class="row">
-          <div class="column">
-          <input type="submit" value="Start Farming" class="button-fast" />
-          </div>
-          <div class="column">
-          <p><strong>Reminder:</strong> Please wait at least 4 minutes before you stop the tracker.</p>
-          </div>
+      <div class="row">
+        <div class="column">
+          <span class="timer"></span>
         </div>
-        <!-- <button name="downloadCSV">Download CSV</button> -->
-      </form>
-    </div>
-    </div>
-    <div class="row">
-      <div class="column">
-        <span class="timer"></span>
       </div>
-    </div>
-    <div class="row">
-      <div class="column column-30">
-        <table>
-          <thead>
-            <tr>
-              <th>Endpoint</th>
-              <th>Initial Values</th>
-              <th>Final Values</th>
-            </tr>
-          </thead>
-          <tbody id="trackedEndpoints">
+      <div class="row">
+        <div class="column column-30">
+          <table>
+            <thead>
+              <tr>
+                <th>Endpoint</th>
+                <th>Initial Values</th>
+                <th>Final Values</th>
+              </tr>
+            </thead>
+            <tbody id="trackedEndpoints">
 
-          </tbody>
-        </table>
-      </div>
-      <div class="column">
-        <div class="row">
-          <div class="column">
-            <h2>Farmed</h2>
-            <div class="flex-container wrap" id="farmedItems"></div>
-          </div>
-          <div class="column">
-            <ul id="farmedCurrencies"></ul>
+            </tbody>
+          </table>
+        </div>
+        <div class="column">
+          <div class="row">
+            <div class="column">
+              <h2>Farmed</h2>
+              <div class="flex-container wrap" id="farmedItems"></div>
+            </div>
+            <div class="column">
+              <ul id="farmedCurrencies"></ul>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <footer>
-  </footer>
+    <footer>
+    </footer>
   </main>
   <script src="js/fast.js"></script>
 </body>

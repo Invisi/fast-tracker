@@ -226,3 +226,7 @@ html, body, .wrapper {
   background: #24292e;
   color: white;
 }
+
+.important {
+  color: red;
+}
