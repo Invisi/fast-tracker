@@ -379,7 +379,32 @@ let displayCurrencies = async function () {
         cDetails[i].id,
         itemDifference['w' + cDetails[i].id]
         ]);
+      if (cDetails[i].id === 1) {
+        let neg = 1;
+        if (itemDifference['w'+cDetails[i].id] < 0)
+           neg = -1;
+        let overallCopperABS = itemDifference['w'+cDetails[i].id];
+        // let coppeitemDifference['w'+cDetails[i].id]
+        let gold = Math.floor(overallCopperABS/10000) * neg;
+        let leftCopper = overallCopperABS % 10000 * neg;
+        let silver = Math.floor(leftCopper/100) * neg;
+        let copper = leftCopper % 100 * neg ;
+
+        str2html.push('<li>');
+        if(gold !== 0)
+          str2html.push(gold + '<span class="sprite"><img src="img/gold.png" alt="g"></span>');
+        if(silver !== 0)
+          str2html.push(silver + '<span class="sprite"><img src="img/silver.png" alt="s"></span>');
+        if(copper !== 0)
+          str2html.push(copper + '<span class="sprite"><img src="img/copper.png" alt="c"></span>');
+        str2html.push('</li>');
+
+
+
+      // str2html.push('<li>'+itemDifference['w'+cDetails[i].id]+'<span class="sprite"><img src="' + cDetails[i].icon + '" alt="' + cDetails[i].name + '"></span></li>')
+    } else {
       str2html.push('<li>'+itemDifference['w'+cDetails[i].id]+'<span class="sprite"><img src="' + cDetails[i].icon + '" alt="' + cDetails[i].name + '"></span></li>')
+    }
     }
   }
 
