@@ -194,17 +194,24 @@ let stopTracking = async function() {
 // Check if all permissions needed are granted
 // If no errors, start getting characters
 let getTokenInfo = async function() {
+  let str2html = [];
   const response = await fetch(buildEndpoint(epTokeninfo));
   let tokeninfo = await response.json();
 
   if (tokeninfo.text === undefined) {
     for (var i = neededPermissions.length - 1; i >= 0; i--) {
       if (!tokeninfo.permissions.includes(neededPermissions[i])) {
-        throw Error('No Permission "' + neededPermissions[i] + '"');
+
+        str2html.push('No Permission "' + neededPermissions[i] + '"');
       }
     }
   } else {
-    throw Error(tokeninfo.text);
+    // throw Error(tokeninfo.text);
+    str2html.push(tokeninfo.text);
+  }
+  if (str2html.length > 0) {
+    document.querySelector('p.errors').innerHTML = str2html.join('');
+    throw Error(str2html.join(''));
   }
 }
 
