@@ -329,7 +329,7 @@ let calcDifference = function() {
     } else {
       count = itemStopCount[item];
     }
-    if (count > 0) {
+    if (count !== 0) {
       itemDifference[item] = count;
     }
   }
