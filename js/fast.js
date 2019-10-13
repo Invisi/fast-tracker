@@ -330,6 +330,13 @@ let flattenItems = function(rawData) {
 
 let calcDifference = function() {
   let count = 0;
+  for (var item in itemStartCount) {
+    if (typeof itemStopCount[item] === 'undefined') {
+
+      itemStopCount[item] = 0;
+    }
+  }
+
   for (var item in itemStopCount) {
     if (typeof itemStartCount[item] !== 'undefined') {
       count = itemStopCount[item] - itemStartCount[item];
