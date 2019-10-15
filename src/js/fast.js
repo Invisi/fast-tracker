@@ -16,12 +16,30 @@ const neededPermissions = [
 "inventories"
 ];
 
+const possibleFarms = {
+  halloween: 'Halloween Lab Farm',
+  dragonfall: 'Dragonfall',
+  istan: 'Istan',
+  forgedchamptrain: 'Forged Champtrain',
+  metatrain: 'Gemstone / LS Meta Train',
+  doricleather: 'Doric Leather Farm',
+  swriba: 'Silverwastes RIBA'
+}
+
+const possibleBags = {
+  lostsaddlebags: 'Lost Saddlebag',
+  phylactery: 'Palawan Phylactery',
+  forgedcomponents: 'Battered Forged Components',
+  sentientseeds: 'Sentient Seeds',
+  brandedstrongboxes: 'Branded Strongboxes'
+}
+
 /******************************************/
 /************ Variables *******************/
 
 let formTracking     = document.querySelector('form[name="trackingForm"]');
 let inputToken       = formTracking.querySelector('input[name="GW2-Token"]');
-let possibleFarms    = formTracking.querySelector('select[name="possibleFarms"]');
+let selPossibleFarms    = formTracking.querySelector('select[name="possibleFarms"]');
 let trackedEndpoints = document.querySelector('#trackedEndpoints');
 
 let timerStart = Date.now();
@@ -37,6 +55,30 @@ let farmedItems    = [];
 
 /******************************************/
 /************ Functions *******************/
+// Build Select, for easier adding new farms
+let setPossibleFarm = function() {
+  let str2html = []
+
+  str2html.push('<option value="" disabled selected>Select your option</option>');
+
+  str2html.push('<optgroup label="Farms">');
+  for(farm in possibleFarms) {
+    str2html.push('<option value="' + farm + '">' + possibleFarms[farm] +'</option>');
+  }
+  str2html.push('</optgroup>');
+
+  str2html.push('<optgroup label="Bags">');
+  for(bag in possibleBags) {
+    str2html.push('<option value="' + bag + '">' + possibleBags[bag] +'</option>');
+  }
+  str2html.push('</optgroup>');
+  str2html.push('<optgroup label="Other">');
+    str2html.push('<option value="other">Nothing on the list</option>');
+  str2html.push('</optgroup>');
+
+
+  selPossibleFarms.innerHTML = str2html.join('');
+}()
 
 // Because I'm too lazy to write it everytime
 let buildEndpoint = function(ep) {
