@@ -216,7 +216,7 @@ input[type="text"] {
   background: #f4f5f6;
 }
 
-input[type="submit"] {
+input[type="submit"],input[type="button"]   {
   color: black;
 }
 
@@ -227,4 +227,37 @@ html, body, .wrapper {
 
 .important {
   color: red;
+}
+
+td.apicheck {
+  background-color: red;
+}
+
+td.apicheck:after {
+  content: " ";
+  display: block;
+  width: 46px;
+  height: 46px;
+  margin: 1px;
+  border-radius: 50%;
+  border: 5px solid #fff;
+  border-color: #fff transparent #fff transparent;
+  animation: lds-dual-ring 1.2s linear infinite;
+}
+
+td.apicheck.done {
+  background-color: green;
+}
+
+td.apicheck.done:after {
+  content: none;
+}
+
+@keyframes lds-dual-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
