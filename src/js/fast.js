@@ -154,36 +154,47 @@ let getAPIData = function (action) {
   for (var i = characterNames.length - 1; i >= 0; i--) {
     pms.push(getInventory(characterNames[i]).then(function(charinv) {
         // Add done indicator
-        let trc = document.querySelector('#hl-' + charinv[0].toLowerCase().replace(/\s/g, '-'));
-        trc.querySelector('td.apicheck.'+action).classList.add('done')
-        return charinv[1];
+        let trc = document.querySelector('#hl-' + charinv[1].toLowerCase().replace(/\s/g, '-'));
+        let td = trc.querySelector('td.apicheck.'+action);
+        td.classList.add('done');
+        // td.dataset.lastmodified = charinv[0];
+        td.innerText = new Date(charinv[0]).toLocaleString();
+        return charinv[2];
       }));
   }
 
   pms.push(getBank().then(function(bank) {
       // Add done indicator
       let trbank = document.querySelector('#hl-bank');
-      trbank.querySelector('td.apicheck.'+action).classList.add('done')
+      let td = trbank.querySelector('td.apicheck.'+action);
+      td.classList.add('done');
+      // td.dataset.lastmodified = bank[0];
+      td.innerText = new Date(bank[0]).toLocaleString();
       return {
-        bank: bank
+        bank: bank[1]
       };
     }));
 
   pms.push(getMaterials().then(function(materials) {
       // Add done indicator
       let trmaterials = document.querySelector('#hl-materials');
-      trmaterials.querySelector('td.apicheck.'+action).classList.add('done')
+      let td =trmaterials.querySelector('td.apicheck.'+action);
+      td.classList.add('done');
+      td.innerText = new Date(materials[0]).toLocaleString();
       return {
-        materials: materials
+        materials: materials[1]
       };
     }));
 
   pms.push(getWallet().then(async function(wallet) {
       // Add done indicator
       let trwallet = document.querySelector('#hl-wallet');
-      trwallet.querySelector('td.apicheck.'+action).classList.add('done')
+      let td = trwallet.querySelector('td.apicheck.'+action);
+      td.classList.add('done');
+      // td.dataset.lastmodified = wallet[0];
+      td.innerText = new Date(wallet[0]).toLocaleString();
       return {
-        wallet: wallet
+        wallet: wallet[1]
       };
     }));
 
@@ -260,6 +271,7 @@ let getAccountInfo = async function () {
 
   // Request
   const response = await fetch(ep);
+  // let lm = response.headers.get('last-modified');
   let account = await response.json();
 
   return account;
@@ -268,6 +280,7 @@ let getAccountInfo = async function () {
 // Getting all Characters from Account
 let getCharacterNames = async function() {
   const response = await fetch(buildEndpoint(epCharacters));
+  // let lm = response.headers.get('last-modified');
   let charNames = await response.json();
 
   buildHTML(charNames);
@@ -281,10 +294,12 @@ let getInventory = async function(character) {
   ep = buildEndpoint(epCharacters + '/' + character + '/inventory');
   // Request
   const response = await fetch(ep);
+  let lm = response.headers.get('last-modified');
   let inventory = await response.json();
 
   // return character and its inventory
   return [
+  lm,
   character,
   inventory
   ];
@@ -297,9 +312,10 @@ let getBank = async function() {
 
   // Request
   const response = await fetch(ep);
+  let lm = response.headers.get('last-modified');
   let bank = await response.json();
 
-  return bank;
+  return [lm, bank];
 }
 
 // Get Materials
@@ -309,9 +325,10 @@ let getMaterials = async function() {
 
   // Request
   const response = await fetch(ep);
+  let lm = response.headers.get('last-modified');
   let mats = await response.json();
 
-  return mats;
+  return [lm, mats];
 }
 
 // Get Wallet
@@ -321,9 +338,10 @@ let getWallet = async function() {
 
   // Request
   const response = await fetch(ep);
+  let lm = response.headers.get('last-modified');
   let wallet = await response.json();
 
-  return wallet;
+  return [lm, wallet];
 }
 
 // Get description of all currencies
@@ -359,7 +377,6 @@ let flattenItems = function(rawData) {
         for (var j in rawData[k].bags[i].inventory) {
           if (rawData[k].bags[i].inventory[j] === null)
             continue;
-          // console.debug(rawData[k].bags[i])
           if (itemCount['i' + rawData[k].bags[i].inventory[j].id] === undefined) {
             itemCount['i' + rawData[k].bags[i].inventory[j].id] = rawData[k].bags[i].inventory[j].count;
           } else {
