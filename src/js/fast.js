@@ -39,12 +39,13 @@ const possibleBags = {
 
 let formTracking     = document.querySelector('form[name="trackingForm"]');
 let inputToken       = formTracking.querySelector('input[name="GW2-Token"]');
-let selPossibleFarms    = formTracking.querySelector('select[name="possibleFarms"]');
+let selPossibleFarms = formTracking.querySelector('select[name="possibleFarms"]');
 let trackedEndpoints = document.querySelector('#trackedEndpoints');
+let lastTracked      = document.querySelector('.last-tracked');
 
 let timerStart = Date.now();
 let timeFarmed = 0;
-let timerInterval;
+let timerInterval, trackingInterval;
 
 let actionHandler  = 0;
 let characterNames = [];
@@ -74,7 +75,7 @@ let setPossibleFarm = function() {
   }
   str2html.push('</optgroup>');
   str2html.push('<optgroup label="Other">');
-    str2html.push('<option value="other">Nothing on the list</option>');
+  str2html.push('<option value="other">Nothing on the list</option>');
   str2html.push('</optgroup>');
 
 
@@ -114,7 +115,10 @@ let formHandler = function(e) {
   e.preventDefault();
 
   if (actionHandler === 0) {
-    startTracking();
+    startTracking().then(function (e) {
+      trackingInterval = setInterval(track, 180000)
+    });
+
   } else if (actionHandler === 1) {
     stopTracking();
   }
@@ -154,16 +158,20 @@ let getAPIData = function (action) {
   for (var i = characterNames.length - 1; i >= 0; i--) {
     pms.push(getInventory(characterNames[i]).then(function(charinv) {
         // Add done indicator
-        let trc = document.querySelector('#hl-' + charinv[0].toLowerCase().replace(/\s/g, '-'));
-        trc.querySelector('td.apicheck.'+action).classList.add('done')
+        if (action !== 'track') {
+          let trc = document.querySelector('#hl-' + charinv[0].toLowerCase().replace(/\s/g, '-'));
+          trc.querySelector('td.apicheck.'+action).classList.add('done');
+        }
         return charinv[1];
       }));
   }
 
   pms.push(getBank().then(function(bank) {
       // Add done indicator
-      let trbank = document.querySelector('#hl-bank');
-      trbank.querySelector('td.apicheck.'+action).classList.add('done')
+      if (action !== 'track') {
+        let trbank = document.querySelector('#hl-bank');
+        trbank.querySelector('td.apicheck.'+action).classList.add('done');
+      }
       return {
         bank: bank
       };
@@ -171,8 +179,10 @@ let getAPIData = function (action) {
 
   pms.push(getMaterials().then(function(materials) {
       // Add done indicator
-      let trmaterials = document.querySelector('#hl-materials');
-      trmaterials.querySelector('td.apicheck.'+action).classList.add('done')
+      if (action !== 'track') {
+        let trmaterials = document.querySelector('#hl-materials');
+        trmaterials.querySelector('td.apicheck.'+action).classList.add('done');
+      }
       return {
         materials: materials
       };
@@ -180,8 +190,10 @@ let getAPIData = function (action) {
 
   pms.push(getWallet().then(async function(wallet) {
       // Add done indicator
-      let trwallet = document.querySelector('#hl-wallet');
-      trwallet.querySelector('td.apicheck.'+action).classList.add('done')
+      if (action !== 'track') {
+        let trwallet = document.querySelector('#hl-wallet');
+        trwallet.querySelector('td.apicheck.'+action).classList.add('done');
+      }
       return {
         wallet: wallet
       };
@@ -210,6 +222,18 @@ let startTracking = async function() {
   });
 }
 
+let track = function () {
+  let promises = getAPIData('track');
+
+  Promise.all(promises).then(function(e) {
+    itemStopCount = flattenItems(e);
+    let curTime = new Date();
+    lastTracked.innerHTML = '<small>(Last tracked: ' + curTime.toLocaleTimeString() + ')</small>'
+  })
+  .then(calcDifference)
+  .then(displayFarmedItems)
+}
+
 // Stop Tracking, getting values
 let stopTracking = async function() {
   // Calculate the time difference from start until now
@@ -224,7 +248,8 @@ let stopTracking = async function() {
     itemStopCount = flattenItems(e);
   })
   .then(calcDifference)
-  .then(displayFarmedItems);
+  .then(displayFarmedItems)
+  .then(generateCSV);
 }
 
 /******************************************/
@@ -447,29 +472,29 @@ let displayCurrencies = async function () {
       if (cDetails[i].id === 1) {
         let neg = 1;
         if (itemDifference['w'+cDetails[i].id] < 0)
-           neg = -1;
-        let overallCopperABS = itemDifference['w'+cDetails[i].id];
+         neg = -1;
+       let overallCopperABS = itemDifference['w'+cDetails[i].id];
 
-        let gold = Math.floor(overallCopperABS/10000) * neg;
-        let leftCopper = overallCopperABS % 10000;
-        let silver = Math.floor(leftCopper/100) * neg;
-        let copper = leftCopper % 100 * neg ;
+       let gold = Math.floor(overallCopperABS/10000) * neg;
+       let leftCopper = overallCopperABS % 10000;
+       let silver = Math.floor(leftCopper/100) * neg;
+       let copper = leftCopper % 100 * neg ;
 
-        str2html.push('<li>');
-        if(gold !== 0)
-          str2html.push(gold + '<span class="sprite"><img src="img/gold.png" alt="g"></span>');
-        if(silver !== 0)
-          str2html.push(silver + '<span class="sprite"><img src="img/silver.png" alt="s"></span>');
-        if(copper !== 0)
-          str2html.push(copper + '<span class="sprite"><img src="img/copper.png" alt="c"></span>');
-        str2html.push('</li>');
-      } else {
-        str2html.push('<li>'+itemDifference['w'+cDetails[i].id]+'<span class="sprite"><img src="' + cDetails[i].icon + '" alt="' + cDetails[i].name + '"></span></li>')
-      }
+       str2html.push('<li>');
+       if(gold !== 0)
+        str2html.push(gold + '<span class="sprite"><img src="img/gold.png" alt="g"></span>');
+      if(silver !== 0)
+        str2html.push(silver + '<span class="sprite"><img src="img/silver.png" alt="s"></span>');
+      if(copper !== 0)
+        str2html.push(copper + '<span class="sprite"><img src="img/copper.png" alt="c"></span>');
+      str2html.push('</li>');
+    } else {
+      str2html.push('<li>'+itemDifference['w'+cDetails[i].id]+'<span class="sprite"><img src="' + cDetails[i].icon + '" alt="' + cDetails[i].name + '"></span></li>')
     }
   }
+}
 
-  document.querySelector('#farmedCurrencies').innerHTML = str2html.join('');
+document.querySelector('#farmedCurrencies').innerHTML = str2html.join('');
 }
 
 let displayItems = async function() {
@@ -483,35 +508,38 @@ let displayItems = async function() {
     return el != null
   });
 
-  // TODO: Fix limit for API
-  let iEp = baseURL + '/v2/items?lang=en&ids=' + ids.join(',');
 
-  // Request
-  const iResponse = await fetch(iEp);
-  let iDetails = await iResponse.json();
+  if (ids.length > 0) {
+    // TODO: Fix limit for API
+    let iEp = baseURL + '/v2/items?lang=en&ids=' + ids.join(',');
 
-  let str2html = [];
+    // Request
+    const iResponse = await fetch(iEp);
+    let iDetails = await iResponse.json();
 
-  if (iDetails.length > 0) {
-    for (var i = 0; i < iDetails.length; i++) {
-      farmedItems.push([
-        iDetails[i].name,
-        iDetails[i].id,
-        itemDifference['i' + iDetails[i].id]
-        ]);
-      str2html.push('<div class="item" id="i' + iDetails[i].id + '"><img src="' + iDetails[i].icon + '" alt="' + iDetails[i].name + '"><span class="count">' + itemDifference['i' + iDetails[i].id] + '</span></div>');
+
+    let str2html = [];
+
+    if (iDetails.length > 0) {
+      for (var i = 0; i < iDetails.length; i++) {
+        farmedItems.push([
+          iDetails[i].name,
+          iDetails[i].id,
+          itemDifference['i' + iDetails[i].id]
+          ]);
+        str2html.push('<div class="item" id="i' + iDetails[i].id + '"><img src="' + iDetails[i].icon + '" alt="' + iDetails[i].name + '"><span class="count">' + itemDifference['i' + iDetails[i].id] + '</span></div>');
+      }
+      document.querySelector('#farmedItems').innerHTML = str2html.join('');
     }
-    document.querySelector('#farmedItems').innerHTML = str2html.join('');
   }
 }
 
 let displayFarmedItems = function() {
-  Promise.all([displayItems(),displayCurrencies(),getAccountInfo()])
-  .then(generateCSV)
+  return Promise.all([displayItems(),displayCurrencies(),getAccountInfo()])
 }
 
 let generateCSV = function (args) {
-  let firstLine = [selPossibleFarms.value, args[2].name, timeFarmed].join(',')+'\n';
+  let firstLine = [selPossibleFarms.value, args[2].name, timeFarmed/1000].join(',')+'\n';
 
   let timestampForFileName = new Date().toISOString();
 
