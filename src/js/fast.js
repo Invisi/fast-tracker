@@ -231,7 +231,7 @@ let track = function () {
     lastTracked.innerHTML = '<small>(Last tracked: ' + curTime.toLocaleTimeString() + ')</small>'
   })
   .then(calcDifference)
-  .then(displayFarmedItems)
+  .then(displayFarmedItems('track'))
 }
 
 // Stop Tracking, getting values
@@ -248,7 +248,7 @@ let stopTracking = async function() {
     itemStopCount = flattenItems(e);
   })
   .then(calcDifference)
-  .then(displayFarmedItems)
+  .then(displayFarmedItems('stop'))
   .then(generateCSV);
 }
 
@@ -458,17 +458,19 @@ let fnTimer = function () {
   document.querySelector('span.timer').innerHTML = 'Farming for ' + Math.floor(delta / 1000).toHumanTimer();
 }
 
-let displayCurrencies = async function () {
+let displayCurrencies = async function (action) {
   let cDetails = await getCurrencyDetails();
   let str2html = [];
 
   for (var i = cDetails.length - 1; i >= 0; i--) {6
     if(typeof itemDifference['w'+cDetails[i].id] !== 'undefined') {
-      farmedItems.push([
-        cDetails[i].name,
-        cDetails[i].id,
-        itemDifference['w' + cDetails[i].id]
-        ]);
+      if (typeof action === 'stop') {
+        farmedItems.push([
+          cDetails[i].name,
+          cDetails[i].id,
+          itemDifference['w' + cDetails[i].id]
+          ]);
+      }
       if (cDetails[i].id === 1) {
         let neg = 1;
         if (itemDifference['w'+cDetails[i].id] < 0)
@@ -497,7 +499,7 @@ let displayCurrencies = async function () {
 document.querySelector('#farmedCurrencies').innerHTML = str2html.join('');
 }
 
-let displayItems = async function() {
+let displayItems = async function(action) {
   let ids = Object.keys(itemDifference).map(function(item) {
     if (item[0] !== 'i')
       return;
@@ -522,11 +524,13 @@ let displayItems = async function() {
 
     if (iDetails.length > 0) {
       for (var i = 0; i < iDetails.length; i++) {
-        farmedItems.push([
-          iDetails[i].name,
-          iDetails[i].id,
-          itemDifference['i' + iDetails[i].id]
-          ]);
+        if (action === 'stop') {
+          farmedItems.push([
+            iDetails[i].name,
+            iDetails[i].id,
+            itemDifference['i' + iDetails[i].id]
+            ]);
+        }
         str2html.push('<div class="item" id="i' + iDetails[i].id + '"><img src="' + iDetails[i].icon + '" alt="' + iDetails[i].name + '"><span class="count">' + itemDifference['i' + iDetails[i].id] + '</span></div>');
       }
       document.querySelector('#farmedItems').innerHTML = str2html.join('');
@@ -534,8 +538,8 @@ let displayItems = async function() {
   }
 }
 
-let displayFarmedItems = function() {
-  return Promise.all([displayItems(),displayCurrencies(),getAccountInfo()])
+let displayFarmedItems = function(action) {
+  return Promise.all([displayItems(action),displayCurrencies(action),getAccountInfo()])
 }
 
 let generateCSV = function (args) {
