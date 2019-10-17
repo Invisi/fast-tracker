@@ -34,6 +34,14 @@ const possibleBags = {
   brandedstrongboxes: 'Branded Strongboxes'
 }
 
+const possibleFractals = {
+  ft1: 'T1 Fractals',
+  ft2: 'T2 Fractals',
+  ft3: 'T3 Fractals',
+  ft4: 'T4 Fractals',
+  fcm: 'Challenge Modes'
+}
+
 /******************************************/
 /************ Variables *******************/
 
@@ -73,6 +81,11 @@ let setPossibleFarm = function() {
   str2html.push('<optgroup label="Bags">');
   for(bag in possibleBags) {
     str2html.push('<option value="' + bag + '">' + possibleBags[bag] +'</option>');
+  }
+  str2html.push('</optgroup>');
+  str2html.push('<optgroup label="Fractals">');
+  for(frac in possibleFractals) {
+    str2html.push('<option value="' + frac + '">' + possibleFractals[frac] +'</option>');
   }
   str2html.push('</optgroup>');
   str2html.push('<optgroup label="Other">');
