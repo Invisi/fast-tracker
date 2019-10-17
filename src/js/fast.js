@@ -53,6 +53,7 @@ let itemStartCount = {};
 let itemStopCount  = {};
 let itemDifference = {};
 let farmedItems    = [];
+let accountName    = '';
 
 /******************************************/
 /********** Base Functions ****************/
@@ -286,8 +287,7 @@ let getAccountInfo = async function () {
   // Request
   const response = await fetch(ep);
   let account = await response.json();
-
-  return account;
+  accountName = account.name;
 }
 
 // Getting all Characters from Account
@@ -542,8 +542,8 @@ let displayFarmedItems = function(action) {
   return Promise.all([displayItems(action),displayCurrencies(action),getAccountInfo()])
 }
 
-let generateCSV = function (args) {
-  let firstLine = [selPossibleFarms.value, args[2].name, timeFarmed/1000].join(',')+'\n';
+let generateCSV = function () {
+  let firstLine = [selPossibleFarms.value, accountName, timeFarmed/1000].join(',')+'\n';
 
   let timestampForFileName = new Date().toISOString();
 
@@ -556,7 +556,7 @@ let generateCSV = function (args) {
   let encodedUri = encodeURI(csvContent);
   let link = document.createElement('a');
   link.setAttribute('href', encodedUri);
-  link.setAttribute('download', selPossibleFarms.value+'_'+args[2].name +'_'+ timestampForFileName +'.csv');
+  link.setAttribute('download', selPossibleFarms.value +'_'+ accountName +'_'+ timestampForFileName +'.csv');
   document.body.appendChild(link); // Required for FF
 
   link.click(); // This will download the data file named 'my_data.csv'.
