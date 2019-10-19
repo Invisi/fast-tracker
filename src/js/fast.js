@@ -478,7 +478,7 @@ let displayCurrencies = async function (action) {
 
   for (var i = cDetails.length - 1; i >= 0; i--) {6
     if(typeof itemDifference['w'+cDetails[i].id] !== 'undefined') {
-      if (typeof action === 'stop') {
+      if (action === 'stop') {
         farmedItems.push([
           cDetails[i].name,
           cDetails[i].id,
