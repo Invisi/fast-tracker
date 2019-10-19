@@ -31,7 +31,8 @@ const possibleBags = {
   phylactery: 'Palawan Phylactery',
   forgedcomponents: 'Battered Forged Components',
   sentientseeds: 'Sentient Seeds',
-  brandedstrongboxes: 'Branded Strongboxes'
+  brandedstrongboxes: 'Branded Strongboxes',
+  factralencryption: 'Fractal Encryption'
 }
 
 const possibleFractals = {
